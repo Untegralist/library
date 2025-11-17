@@ -8,20 +8,27 @@ datasource db {
 }
 
 model Writer {
-  id       String @id
+  id       String @id // This acts as your username
   password String
+  
+  // Relation: A writer has "many" books
+  books    Book[] 
 }
 
 model Book {
   id            String   @id @default(uuid())
   title         String
-  author        String
+  author        String  
   publishedDate DateTime @default(now())
   genre         Genre
   synopsis      String
   documentName  String?
   documentType  String?
   documentUrl   String?
+
+  // Relation: A book belongs to "one" writer
+  writerId      String
+  writer        Writer   @relation(fields: [writerId], references: [id])
 }
 
 enum Genre {
