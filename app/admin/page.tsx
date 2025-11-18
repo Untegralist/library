@@ -1,14 +1,7 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth";
 
 export default async function AdminHomePage() {
-  const currentUser = await getCurrentUser();
-
-  // Check if user is admin
-  if (!currentUser || currentUser.id !== 'admin') {
-    redirect('/');
-  }
+  // No need to check auth here - layout.tsx handles it
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -42,7 +35,7 @@ export default async function AdminHomePage() {
 
           {/* View Writers Card */}
           <Link 
-            href="/writers"
+            href="/admin/writers/view"
             className="bg-white shadow-md rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
           >
             <div className="flex items-center justify-between mb-4">
@@ -63,8 +56,6 @@ export default async function AdminHomePage() {
             </div>
             <p className="text-gray-600">View and manage all registered writers</p>
           </Link>
-
-          {/* Add more admin actions as needed */}
         </div>
       </div>
     </div>

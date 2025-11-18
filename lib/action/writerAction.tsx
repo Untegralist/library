@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
@@ -47,8 +48,8 @@ export const createWriter = async (prevState: any, formData: FormData) => {
     return { message: "Failed to create writer" };
   }
 
-  revalidatePath("/writers");
-  redirect("/writers");
+  revalidatePath("/admin");
+  redirect("/admin");
 };
 
 export const updateWriter = async (

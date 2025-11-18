@@ -13,18 +13,22 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Attempt to sign in
     const result = await signIn("credentials", {
       id,
       password,
-      redirect: false, // We handle redirect manually
+      redirect: false,
     });
 
     if (result?.error) {
       setError("Invalid ID or Password");
     } else {
-      router.push("/"); // Redirect to home on success
-      router.refresh(); // Refresh navbar to show logged in state
+      // Check role and redirect accordingly
+      if (id === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+      router.refresh();
     }
   };
 
