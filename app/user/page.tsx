@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getBooksByWriterId } from "@/lib/get/getBook";
-
+import { deleteBook } from "@/lib/action/bookAction";
+import { DeleteButton } from "../components/Buttons";
 
 export default async function UserDashboard() {
   // 1. Authenticate
@@ -44,7 +45,6 @@ export default async function UserDashboard() {
         </div>
 
         {/* --- Stats Grid --- */}
-        {/* We now inject the REAL length of the books array */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-10">
           <StatCard title="Published Books" value={books.length.toString()} icon="book" />
           <StatCard title="Total Reads" value="-" icon="eye" />
@@ -77,7 +77,7 @@ export default async function UserDashboard() {
                 href="/user/createbook"
                 className="text-blue-600 font-semibold hover:text-blue-700 hover:underline underline-offset-4"
               >
-                Start writing your first book &rarr;
+                Start posting your first book &rarr;
               </Link>
             </div>
           ) : (
@@ -107,13 +107,15 @@ export default async function UserDashboard() {
                   </div>
 
                   <div className="flex items-center gap-3 self-end sm:self-center">
-                    {/* Example Action Buttons */}
                     <button className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors">
                       Edit
                     </button>
                     <Link href={`/books/${book.id}`} className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-transparent rounded-lg hover:bg-blue-100 transition-colors">
                       View
                     </Link>
+                    
+                    {/* DELETE BUTTON ADDED HERE */}
+                    <DeleteButton id={book.id} onDelete={deleteBook} />
                   </div>
                 </div>
               ))}

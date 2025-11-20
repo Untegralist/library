@@ -80,7 +80,7 @@ export default async function AdminPage() {
             className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all group"
           >
             <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600">View Directory &rarr;</h2>
-            <p className="text-gray-500">Manage existing writers and their permissions.</p>
+            <p className="text-gray-500">Manage existing writers.</p>
           </Link>
         </div>
       </div>

@@ -9,10 +9,12 @@ const Navbar = () => {
   
   // States
   const [isGenreOpen, setIsGenreOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New State
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Role Checks
   const isAdmin = session?.user?.role === "admin";
+  const isWriter = session?.user?.role === "writer";
 
   // Handle Scroll
   useEffect(() => {
@@ -72,6 +74,19 @@ const Navbar = () => {
                     <path fillRule="evenodd" d="M10.362 1.093a.75.75 0 0 0-.724 0L2.523 5.018 10 9.143l7.477-4.125-7.115-3.925ZM1.25 5.75v6.5a.75.75 0 0 0 .375.65l7.75 4.5a.75.75 0 0 0 .75 0l7.75-4.5a.75.75 0 0 0 .375-.65v-6.5l-7.639 4.215a.75.75 0 0 1-.722 0L1.25 5.75Z" clipRule="evenodd" />
                   </svg>
                   <span className="font-semibold">Admin</span>
+                </Link>
+              )}
+
+              {/* WRITER LINK (New) */}
+              {isWriter && (
+                <Link 
+                  href="/user" 
+                  className="mr-2 px-3 py-2 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all duration-200 flex items-center gap-1 border border-indigo-100"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                    <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+                  </svg>
+                  <span className="font-semibold">Studio</span>
                 </Link>
               )}
 
@@ -206,6 +221,16 @@ const Navbar = () => {
                >
                  Admin Dashboard
                </Link>
+              )}
+
+              {isWriter && (
+                <Link 
+                  href="/user" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-semibold flex items-center gap-2"
+                >
+                  Writer Studio
+                </Link>
               )}
 
               <MobileNavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
