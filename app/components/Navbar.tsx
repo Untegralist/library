@@ -158,7 +158,8 @@ const Navbar = () => {
                         </span>
                     </div>
                     <button 
-                        onClick={() => signOut()} 
+                        /* UPDATED: Added callbackUrl to signOut */
+                        onClick={() => signOut({ callbackUrl: "/" })} 
                         className="p-2 rounded-full text-gray-500 hover:bg-red-50 hover:text-red-500 transition-all"
                         title="Sign Out"
                     >
@@ -274,7 +275,8 @@ const Navbar = () => {
                     <span className="text-xs text-gray-500 capitalize">{session.user.role}</span>
                   </div>
                   <button 
-                    onClick={() => signOut()}
+                    /* UPDATED: Added callbackUrl to signOut */
+                    onClick={() => signOut({ callbackUrl: "/" })}
                     className="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
                   >
                     Sign Out
