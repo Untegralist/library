@@ -34,10 +34,5 @@ model Book {
 enum Genre {
   FICTION
   NON_FICTION
-  SCIFI
-  FANTASY
-  MYSTERY
-  ROMANCE
-  HORROR
-  HISTORY
+
 }
