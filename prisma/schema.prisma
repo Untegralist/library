@@ -31,7 +31,7 @@ model Book {
   writer        Writer   @relation(fields: [writerId], references: [id])
 }
 
-enum genre {
+enum Genre {
   FICTION
   NON_FICTION
 }
