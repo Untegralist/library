@@ -1,9 +1,11 @@
+// app/admin/writers/view/page.tsx
 import { getWriter } from "@/lib/get/getWriter";
 import { deleteWriter } from "@/lib/action/writerAction";
 import { DeleteButton } from "@/app/components/Buttons";
+import type { Writer } from "@prisma/client"; // ← Add this import!
 
 export default async function WritersViewPage() {
-  const writers = await getWriter();
+  const writers: Writer[] = await getWriter(); // ← Explicitly type the array
 
   return (
     <div className="min-h-screen bg-gray-50/50 pt-28 pb-12 px-4 sm:px-6 lg:px-8">
@@ -29,7 +31,7 @@ export default async function WritersViewPage() {
           </div>
         </div>
 
-        {/* --- The List (Modern "Floating Rows" Layout) --- */}
+        {/* --- The List --- */}
         {writers.length === 0 ? (
           <div className="flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-300 p-16 text-center">
             <div className="bg-gray-50 p-4 rounded-full mb-4">
@@ -44,14 +46,14 @@ export default async function WritersViewPage() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {/* Table Header (Visual Only) */}
+            {/* Table Header */}
             <div className="hidden md:grid grid-cols-12 px-6 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
               <div className="col-span-8">Writer Identification</div>
               <div className="col-span-4 text-right">Actions</div>
             </div>
 
             {/* Data Rows */}
-            {writers.map((writer) => (
+            {writers.map((writer: Writer) => ( // ← Type 'writer' here
               <div 
                 key={writer.id} 
                 className="group relative bg-white rounded-xl p-4 md:p-5 border border-gray-100 shadow-sm hover:shadow-lg hover:border-blue-100 transition-all duration-300 flex flex-col md:grid md:grid-cols-12 items-center gap-4"
@@ -63,7 +65,6 @@ export default async function WritersViewPage() {
                 <div className="col-span-8 w-full flex items-center gap-4">
                   {/* Generated Avatar Icon */}
                   <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center text-blue-600 font-bold shadow-inner">
-                    {/* Taking last 2 chars of ID or generic 'W' for avatar */}
                     {writer.id.slice(0, 2).toUpperCase()}
                   </div>
                   
