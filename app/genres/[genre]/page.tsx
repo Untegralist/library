@@ -9,29 +9,26 @@ type Props = {
 };
 
 export default async function GenrePage({ params }: Props) {
-  // Prevent crash if someone visits /genres directly
-  if (!params?.genre) {
-    redirect('/');
+  // ← THIS LINE FIXES EVERYTHING
+  if (!params.genre) {
+    redirect('/'); // Immediately go home if no genre slug
   }
 
-  const genreSlug = params.genre.toLowerCase();
+  const slug = params.genre.toLowerCase();
 
-  // Map URL slug → database enum value (uppercase as in your schema)
   const genreMap: Record<string, 'FICTION' | 'NON_FICTION'> = {
     fiction: 'FICTION',
     'non-fiction': 'NON_FICTION',
   };
 
-  const dbGenre = genreMap[genreSlug];
+  const dbGenre = genreMap[slug];
 
-  // Invalid genre → 404
   if (!dbGenre) {
     notFound();
   }
 
-  // Fetch books from database
   const books = await prisma.book.findMany({
-    where: { genre: dbGenre }, // Perfect match with your enum
+    where: { genre: dbGenre },
     select: {
       id: true,
       title: true,
@@ -42,28 +39,26 @@ export default async function GenrePage({ params }: Props) {
     orderBy: { publishedDate: 'desc' },
   });
 
-  const genreDisplay = dbGenre === 'FICTION' ? 'Fiction' : 'Non-Fiction';
+  const displayName = dbGenre === 'FICTION' ? 'Fiction' : 'Non-Fiction';
 
   return (
     <main className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 pt-24 pb-32">
-        {/* Header */}
-        <div className="text-center space-y-6 mb-16">
+        <section className="text-center space-y-6 mb-16">
           <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">
-            Karya <span className="text-blue-600">{genreDisplay}</span>
+            Karya <span className="text-blue-600">{displayName}</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Jelajahi semua tulisan {genreDisplay.toLowerCase()} dari siswa SMP dan SMA di seluruh Indonesia.
+            Jelajahi semua tulisan {displayName.toLowerCase()} dari siswa SMP dan SMA di seluruh Indonesia.
           </p>
           <Link href="/" className="inline-block mt-4 text-blue-600 hover:underline">
             ← Kembali ke Beranda
           </Link>
-        </div>
+        </section>
 
-        {/* Empty State */}
         {books.length === 0 ? (
           <div className="text-center py-20">
-            <div className="mx-auto w-64 h-64 relative mb-8">
+            <div className="relative w-64 h-64 mx-auto mb-8">
               <Image
                 src="https://static.vecteezy.com/system/resources/previews/020/989/063/non_2x/open-book-in-flat-design-style-literature-for-reading-and-education-vector.jpg"
                 alt="No books"
@@ -72,14 +67,10 @@ export default async function GenrePage({ params }: Props) {
               />
             </div>
             <p className="text-2xl text-gray-500">
-              Belum ada karya {genreDisplay.toLowerCase()} saat ini.
-            </p>
-            <p className="text-gray-600 mt-4">
-              Jadilah yang pertama mengunggah!
+              Belum ada karya {displayName.toLowerCase()} saat ini.
             </p>
           </div>
         ) : (
-          /* Book Grid */
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {books.map((book) => (
               <Link key={book.id} href={`/books/${book.id}`} className="block">
