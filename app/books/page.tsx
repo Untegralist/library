@@ -1,88 +1,55 @@
-// app/books/[id]/page.tsx
+// app/books/page.tsx — List of ALL books
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
-type Props = {
-  params: { id: string };
-};
-
-export default async function BookPage({ params }: Props) {
-  const book = await prisma.book.findUnique({
-    where: { id: params.id },
+export default async function AllBooksPage() {
+  const books = await prisma.book.findMany({
     select: {
+      id: true,
       title: true,
       author: true,
-      synopsis: true,
-      publishedDate: true,
-      documentUrl: true,
-      documentType: true,
       genre: true,
+      publishedDate: true,
     },
+    orderBy: { publishedDate: 'desc' },
   });
-
-  if (!book || !book.documentUrl) {
-    notFound();
-  }
-
-  const genreSlug = book.genre === 'FICTION' ? 'fiction' : 'non-fiction';
-  const genreDisplay = book.genre === 'FICTION' ? 'Fiction' : 'Non-Fiction';
 
   return (
     <main className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-12">
-        {/* Header Section */}
-        <section className="text-center space-y-4">
-          <Link
-            href={`/genres/${genreSlug}`}
-            className="inline-block text-blue-600 hover:underline font-medium"
-          >
-            ← Kembali ke {genreDisplay}
-          </Link>
-
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32">
+        <section className="text-center space-y-6 mb-16">
           <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">
-            {book.title}
+            Semua Karya
           </h1>
-
-          <p className="text-2xl text-gray-600">Oleh {book.author}</p>
-
-          <p className="text-gray-500">
-            Dipublikasikan pada{' '}
-            {new Date(book.publishedDate).toLocaleDateString('id-ID', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Koleksi lengkap tulisan dari siswa SMP dan SMA di seluruh Indonesia.
           </p>
         </section>
 
-        {/* Synopsis Section */}
-        {book.synopsis && (
-          <section className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-lg p-10 space-y-6">
-              <h2 className="text-3xl font-bold text-gray-900">Sinopsis</h2>
-              <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
-                {book.synopsis}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* Full PDF Reader */}
-        <section className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
-            <div className="bg-blue-600 text-white text-center py-4 font-semibold text-xl">
-              Baca Karya Lengkap
-            </div>
-            <iframe
-              src={book.documentUrl}
-              className="w-full h-screen min-h-[800px]"
-              title={`PDF reader for ${book.title}`}
-              allow="fullscreen"
-              loading="lazy"
-            />
+        {books.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-2xl text-gray-500">Belum ada karya yang dipublikasikan.</p>
           </div>
-        </section>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {books.map((book) => (
+              <Link key={book.id} href={`/books/${book.id}`} className="block">
+                <div className="bg-white rounded-3xl shadow-lg p-8 space-y-4 hover:scale-105 transition duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 line-clamp-2">
+                    {book.title}
+                  </h3>
+                  <p className="text-gray-600">Oleh {book.author}</p>
+                  <p className="text-sm text-gray-500">
+                    {book.genre === 'FICTION' ? 'Fiction' : 'Non-Fiction'}
+                  </p>
+                  <span className="text-blue-600 font-medium hover:underline">
+                    Baca Selengkapnya →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
