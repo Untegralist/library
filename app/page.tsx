@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -107,7 +108,40 @@ export default function HomePage() {
             </ul>
           </div>
         </section>
+{/* NEW: Genre Section */}
+        <section className="max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            Jelajahi Karya Berdasarkan Genre
+          </h2>
 
+          <div className="grid md:grid-cols-2 gap-10">
+            {/* Fiction Card */}
+            <Link href="/genres/fiction" className="block">
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-3xl shadow-xl p-12 space-y-6 transform hover:scale-105 transition duration-300 cursor-pointer">
+                <div className="bg-white/20 rounded-2xl w-32 h-32 mx-auto flex items-center justify-center">
+                  <span className="text-5xl">📚</span>
+                </div>
+                <h3 className="text-3xl font-bold text-center">Fiction</h3>
+                <p className="text-center text-lg opacity-90">
+                  Cerita imajinasi, novel, cerpen, dan karya fiksi kreatif dari para siswa.
+                </p>
+              </div>
+            </Link>
+
+            {/* Non-Fiction Card */}
+            <Link href="/genres/non-fiction" className="block">
+              <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white rounded-3xl shadow-xl p-12 space-y-6 transform hover:scale-105 transition duration-300 cursor-pointer">
+                <div className="bg-white/20 rounded-2xl w-32 h-32 mx-auto flex items-center justify-center">
+                  <span className="text-5xl">📝</span>
+                </div>
+                <h3 className="text-3xl font-bold text-center">Non-Fiction</h3>
+                <p className="text-center text-lg opacity-90">
+                  Esai, artikel ilmiah, laporan, opini, dan tulisan berbasis fakta.
+                </p>
+              </div>
+            </Link>
+          </div>
+        </section>
       </div>
     </main>
   );
