@@ -9,8 +9,7 @@ import { redirect } from "next/navigation";
 
 // Match the Enum in your schema.prisma exactly
 const GenreEnum = z.enum([
-  "FICTION", "NON_FICTION", "SCIFI", "FANTASY", 
-  "MYSTERY", "ROMANCE", "HORROR", "HISTORY"
+  "FICTION", "NON_FICTION"
 ]);
 
 const BookSchema = z.object({
