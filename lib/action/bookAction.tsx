@@ -44,15 +44,16 @@ export async function createBook(prevState: any, formData: FormData) {
   }
 }
 
-// FIXED: updateBook now takes only prevState + formData
-// Update book - now takes ONLY formData (correct for <form action>)
-// lib/action/bookAction.ts (updateBook only)
-export async function updateBook(formData: FormData) {
+export async function updateBook(formData: FormData): Promise<void> {
   const validated = BookSchema.safeParse(Object.fromEntries(formData));
 
   if (!validated.success) {
-    // Return error state (Next.js allows this for form state)
-    return { errors: validated.error.flatten().fieldErrors };
+    // Instead of returning errors, throw or log – for server form we redirect on error
+    throw new Error(
+      validated.error.flatten().fieldErrors.title?.[0] ||
+      validated.error.flatten().fieldErrors.author?.[0] ||
+      'Validation failed. Please check your input.'
+    );
   }
 
   const { id, ...data } = validated.data;
