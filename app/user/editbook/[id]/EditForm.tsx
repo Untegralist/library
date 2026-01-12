@@ -13,9 +13,23 @@ type FormState = {
 
 const initialState: FormState = {};
 
+// Separate component for the submit button (required for useFormStatus)
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      {pending ? 'Saving...' : 'Save Changes'}
+    </button>
+  );
+}
+
 export function EditForm({ book }: { book: any }) {
   const [state, formAction] = useFormState(updateBook, initialState);
-  const { pending } = useFormStatus();
 
   // Redirect on success (client-side)
   useEffect(() => {
@@ -26,7 +40,12 @@ export function EditForm({ book }: { book: any }) {
 
   return (
     <form action={formAction} className="bg-white rounded-3xl shadow-lg p-8 md:p-10 space-y-8 border border-gray-100">
+      {/* Hidden fields */}
       <input type="hidden" name="id" value={book.id} />
+      <input type="hidden" name="writerId" value={book.writerId} />
+      {book.documentUrl && (
+        <input type="hidden" name="documentUrl" value={book.documentUrl} />
+      )}
 
       {/* Title */}
       <div>
@@ -39,8 +58,7 @@ export function EditForm({ book }: { book: any }) {
           name="title"
           defaultValue={book.title}
           required
-          disabled={pending}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition disabled:opacity-50"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           placeholder="Enter book title"
         />
         {state?.errors?.title && (
@@ -59,8 +77,7 @@ export function EditForm({ book }: { book: any }) {
           name="author"
           defaultValue={book.author}
           required
-          disabled={pending}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition disabled:opacity-50"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           placeholder="Your name as author"
         />
         {state?.errors?.author && (
@@ -78,8 +95,7 @@ export function EditForm({ book }: { book: any }) {
           name="genre"
           defaultValue={book.genre}
           required
-          disabled={pending}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white disabled:opacity-50"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-white"
         >
           <option value="FICTION">Fiction</option>
           <option value="NON_FICTION">Non-Fiction</option>
@@ -99,8 +115,7 @@ export function EditForm({ book }: { book: any }) {
           name="synopsis"
           defaultValue={book.synopsis || ''}
           rows={6}
-          disabled={pending}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition disabled:opacity-50"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           placeholder="Write a short description of your book..."
         />
         {state?.errors?.synopsis && (
@@ -115,7 +130,12 @@ export function EditForm({ book }: { book: any }) {
         </label>
         <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
           {book.documentUrl ? (
-            <a href={book.documentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            <a 
+              href={book.documentUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-600 hover:underline"
+            >
               View Current PDF
             </a>
           ) : (
@@ -126,21 +146,19 @@ export function EditForm({ book }: { book: any }) {
 
       {/* Form feedback */}
       {state?.message && !state.success && (
-        <p className="text-red-500 text-center">{state.message}</p>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+          {state.message}
+        </div>
       )}
       {state?.success && (
-        <p className="text-green-600 text-center">Book updated successfully! Redirecting...</p>
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
+          Book updated successfully! Redirecting...
+        </div>
       )}
 
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 pt-6">
-        <button
-          type="submit"
-          disabled={pending}
-          className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          {pending ? 'Saving...' : 'Save Changes'}
-        </button>
+        <SubmitButton />
         <Link
           href="/user"
           className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-xl font-medium hover:bg-gray-300 transition text-center"
