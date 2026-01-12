@@ -1,9 +1,9 @@
-// app/user/editbook/[id]/EditForm.tsx
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';  // ← this is correct for your version
+import { useFormState, useFormStatus } from 'react-dom';
 import { updateBook } from '@/lib/action/bookAction';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 type FormState = {
   success?: boolean;
@@ -16,6 +16,13 @@ const initialState: FormState = {};
 export function EditForm({ book }: { book: any }) {
   const [state, formAction] = useFormState(updateBook, initialState);
   const { pending } = useFormStatus();
+
+  // Redirect on success (client-side)
+  useEffect(() => {
+    if (state?.success) {
+      window.location.href = `/books/${book.id}`;
+    }
+  }, [state, book.id]);
 
   return (
     <form action={formAction} className="bg-white rounded-3xl shadow-lg p-8 md:p-10 space-y-8 border border-gray-100">
@@ -101,7 +108,7 @@ export function EditForm({ book }: { book: any }) {
         )}
       </div>
 
-      {/* PDF URL */}
+      {/* PDF URL (Read-only) */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Current PDF Document
@@ -117,9 +124,13 @@ export function EditForm({ book }: { book: any }) {
         </div>
       </div>
 
-      {/* Feedback */}
-      {state?.message && <p className="text-red-500 text-center">{state.message}</p>}
-      {state?.success && <p className="text-green-600 text-center">Book updated successfully!</p>}
+      {/* Form feedback */}
+      {state?.message && !state.success && (
+        <p className="text-red-500 text-center">{state.message}</p>
+      )}
+      {state?.success && (
+        <p className="text-green-600 text-center">Book updated successfully! Redirecting...</p>
+      )}
 
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 pt-6">

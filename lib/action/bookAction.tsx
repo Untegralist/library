@@ -5,8 +5,9 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Genre } from '@prisma/client';
+import type { FormState } from '@/lib/form';  // Make sure this file exists and exports FormState
 
-// Zod schema (no changes needed)
+// Zod schema (unchanged from your version)
 const BookSchema = z.object({
   id: z.string().min(1, 'Book ID is required'),
   title: z.string().min(1, 'Title is required'),
@@ -17,9 +18,15 @@ const BookSchema = z.object({
   documentUrl: z.string().url({ message: 'Invalid URL' }).optional().or(z.literal('')),
 });
 
-// Create book (unchanged)
+// Create book (your original, with safe parsing)
 export async function createBook(prevState: any, formData: FormData) {
-  const validated = BookSchema.omit({ id: true }).safeParse(Object.fromEntries(formData));
+  // Safe manual parsing (avoids any FormData iteration issues)
+  const data: Record<string, string> = {};
+  formData.forEach((value, key) => {
+    data[key] = value.toString();
+  });
+
+  const validated = BookSchema.omit({ id: true }).safeParse(data);
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
@@ -44,9 +51,9 @@ export async function createBook(prevState: any, formData: FormData) {
   }
 }
 
-// lib/action/bookAction.ts — updateBook
-// lib/action/bookAction.ts
+// Update book – merged + safe + returns FormState
 export async function updateBook(formData: FormData): Promise<FormState> {
+  // Safe manual parsing (no crash even if formData is serialized)
   const data: Record<string, string> = {};
   formData.forEach((value, key) => {
     data[key] = value.toString();
@@ -58,6 +65,7 @@ export async function updateBook(formData: FormData): Promise<FormState> {
     return {
       success: false,
       errors: validated.error.flatten().fieldErrors,
+      message: 'Validation failed',
     };
   }
 
@@ -84,6 +92,7 @@ export async function updateBook(formData: FormData): Promise<FormState> {
 
     return {
       success: true,
+      message: 'Book updated successfully',
     };
   } catch (error) {
     console.error('Update book error:', error);
@@ -93,18 +102,17 @@ export async function updateBook(formData: FormData): Promise<FormState> {
     };
   }
 }
-// Delete (unchanged)
-// Delete book - now returns Promise<void> (no return object)
+
+// Delete book (your original + void return)
 export async function deleteBook(id: string): Promise<void> {
   try {
     await prisma.book.delete({
       where: { id },
     });
     revalidatePath('/user');
-    // Optional: redirect if you want
-    // redirect('/user');
+    // Optional: redirect('/user');
   } catch (error) {
     console.error('Delete book error:', error);
-    throw new Error('Failed to delete book'); // Or handle in UI
+    throw new Error('Failed to delete book');
   }
 }
