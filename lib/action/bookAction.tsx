@@ -45,7 +45,8 @@ export async function createBook(prevState: any, formData: FormData) {
 }
 
 // FIXED: updateBook now takes only prevState + formData
-export async function updateBook(prevState: any, formData: FormData) {
+// Update book - now takes ONLY formData (correct for <form action>)
+export async function updateBook(formData: FormData) {
   const validated = BookSchema.safeParse(Object.fromEntries(formData));
 
   if (!validated.success) {
@@ -75,7 +76,6 @@ export async function updateBook(prevState: any, formData: FormData) {
     return { message: 'Failed to update book' };
   }
 }
-
 // Delete (unchanged)
 export async function deleteBook(id: string) {
   try {
