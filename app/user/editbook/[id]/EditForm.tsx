@@ -2,16 +2,15 @@
 
 import { useFormState, useFormStatus } from 'react-dom';
 import { updateBook } from '@/lib/action/bookAction';
+import type { FormState } from '@/lib/action/bookAction';  // ← Use 'type' keyword
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-type FormState = {
-  success?: boolean;
-  errors?: Record<string, string[]>;
-  message?: string;
+const initialState: FormState = {
+  success: false,
+  errors: {},
+  message: '',
 };
-
-const initialState: FormState = {};
 
 // Separate component for the submit button (required for useFormStatus)
 function SubmitButton() {
