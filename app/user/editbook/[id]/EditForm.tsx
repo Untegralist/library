@@ -1,6 +1,7 @@
+// app/user/editbook/[id]/EditForm.tsx
 'use client';
 
-import { useActionState, useFormStatus } from 'react-dom';  // ← Use this import
+import { useFormState, useFormStatus } from 'react-dom';  // ← this is correct for your version
 import { updateBook } from '@/lib/action/bookAction';
 import Link from 'next/link';
 
@@ -13,7 +14,7 @@ type FormState = {
 const initialState: FormState = {};
 
 export function EditForm({ book }: { book: any }) {
-  const [state, formAction] = useActionState(updateBook, initialState);  // ← Change to useFormState
+  const [state, formAction] = useFormState(updateBook, initialState);
   const { pending } = useFormStatus();
 
   return (
@@ -100,7 +101,7 @@ export function EditForm({ book }: { book: any }) {
         )}
       </div>
 
-      {/* PDF URL (Read-only) */}
+      {/* PDF URL */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Current PDF Document
