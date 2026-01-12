@@ -45,22 +45,29 @@ export async function createBook(prevState: any, formData: FormData) {
 }
 
 // lib/action/bookAction.ts — updateBook
-export async function updateBook(formData: FormData) {
+// lib/action/bookAction.ts
+export async function updateBook(formData: FormData): Promise<FormState> {
   const data: Record<string, string> = {};
   formData.forEach((value, key) => {
-    data[key] = value.toString(); // safe conversion
+    data[key] = value.toString();
   });
 
   const validated = BookSchema.safeParse(data);
 
   if (!validated.success) {
-    return { success: false, errors: validated.error.flatten().fieldErrors };
+    return {
+      success: false,
+      errors: validated.error.flatten().fieldErrors,
+    };
   }
 
   const { id, ...updateData } = validated.data;
 
   if (!id) {
-    return { success: false, message: 'Book ID is required' };
+    return {
+      success: false,
+      message: 'Book ID is required',
+    };
   }
 
   try {
@@ -75,10 +82,15 @@ export async function updateBook(formData: FormData) {
     revalidatePath(`/books/${id}`);
     revalidatePath('/user');
 
-    return { success: true };
+    return {
+      success: true,
+    };
   } catch (error) {
     console.error('Update book error:', error);
-    return { success: false, message: 'Failed to update book' };
+    return {
+      success: false,
+      message: 'Failed to update book',
+    };
   }
 }
 // Delete (unchanged)
