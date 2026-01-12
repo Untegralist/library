@@ -86,8 +86,8 @@ export default function CreateBookForm({ currentUserId }: CreateBookFormProps) {
             placeholder="Enter book title"
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          {state?.Error?.title && (
-            <p className="text-red-500 text-sm mt-1">{state.Error.title[0]}</p>
+          {state?.errors?.title && (
+            <p className="text-red-500 text-sm mt-1">{state.errors?.title[0]}</p>
           )}
         </div>
 
@@ -100,8 +100,8 @@ export default function CreateBookForm({ currentUserId }: CreateBookFormProps) {
             placeholder="Display author name"
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          {state?.Error?.author && (
-            <p className="text-red-500 text-sm mt-1">{state.Error.author[0]}</p>
+          {state?.errors?.author && (
+            <p className="text-red-500 text-sm mt-1">{state.errors?.author[0]}</p>
           )}
         </div>
 
@@ -117,8 +117,8 @@ export default function CreateBookForm({ currentUserId }: CreateBookFormProps) {
             <option value="FICTION">Fiction</option>
             <option value="NON_FICTION">Non-Fiction</option>
           </select>
-          {state?.Error?.genre && (
-            <p className="text-red-500 text-sm mt-1">{state.Error.genre[0]}</p>
+          {state?.errors?.genre && (
+            <p className="text-red-500 text-sm mt-1">{state.errors?.genre[0]}</p>
           )}
         </div>
 
@@ -131,8 +131,8 @@ export default function CreateBookForm({ currentUserId }: CreateBookFormProps) {
             placeholder="Brief synopsis of the book"
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          {state?.Error?.synopsis && (
-            <p className="text-red-500 text-sm mt-1">{state.Error.synopsis[0]}</p>
+          {state?.errors?.synopsis && (
+            <p className="text-red-500 text-sm mt-1">{state.errors?.synopsis[0]}</p>
           )}
         </div>
 
