@@ -80,13 +80,17 @@ export async function updateBook(formData: FormData): Promise<void> {
   }
 }
 // Delete (unchanged)
-export async function deleteBook(id: string) {
+// Delete book - now returns Promise<void> (no return object)
+export async function deleteBook(id: string): Promise<void> {
   try {
-    await prisma.book.delete({ where: { id } });
+    await prisma.book.delete({
+      where: { id },
+    });
     revalidatePath('/user');
-    return { success: true };
+    // Optional: redirect if you want
+    // redirect('/user');
   } catch (error) {
     console.error('Delete book error:', error);
-    return { success: false, message: 'Failed to delete book' };
+    throw new Error('Failed to delete book'); // Or handle in UI
   }
 }
