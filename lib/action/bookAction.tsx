@@ -44,30 +44,43 @@ export async function createBook(prevState: any, formData: FormData) {
   }
 }
 
-export async function updateBook(formData: FormData): Promise<void> {
-  const validated = BookSchema.safeParse(Object.fromEntries(formData));
+// lib/action/bookAction.ts — updateBook
+export async function updateBook(formData: FormData) {
+  // Read values safely with .get()
+  const id = formData.get('id') as string;
+  const title = formData.get('title') as string;
+  const author = formData.get('author') as string;
+  const genre = formData.get('genre') as 'FICTION' | 'NON_FICTION';
+  const synopsis = formData.get('synopsis') as string;
+  const writerId = formData.get('writerId') as string;
+  const documentUrl = formData.get('documentUrl') as string | null;
 
-  if (!validated.success) {
-    // Instead of returning errors, throw or log – for server form we redirect on error
-    throw new Error(
-      validated.error.flatten().fieldErrors.title?.[0] ||
-      validated.error.flatten().fieldErrors.author?.[0] ||
-      'Validation failed. Please check your input.'
-    );
-  }
-
-  const { id, ...data } = validated.data;
-
+  // Manual validation (fallback if Zod fails on non-string values)
   if (!id) {
-    throw new Error('Book ID is required for update');
+    return { success: false, message: 'Book ID is required' };
+  }
+  if (!title || title.trim() === '') {
+    return { success: false, message: 'Title is required' };
+  }
+  if (!author || author.trim() === '') {
+    return { success: false, message: 'Author is required' };
+  }
+  if (!['FICTION', 'NON_FICTION'].includes(genre)) {
+    return { success: false, message: 'Please select Fiction or Non-Fiction' };
+  }
+  if (!synopsis || synopsis.length < 10) {
+    return { success: false, message: 'Synopsis must be at least 10 characters' };
   }
 
   try {
     await prisma.book.update({
       where: { id },
       data: {
-        ...data,
-        genre: data.genre as Genre,
+        title,
+        author,
+        genre: genre as Genre,
+        synopsis,
+        documentUrl: documentUrl || null,
       },
     });
 
@@ -76,7 +89,7 @@ export async function updateBook(formData: FormData): Promise<void> {
     redirect(`/books/${id}`);
   } catch (error) {
     console.error('Update book error:', error);
-    throw new Error('Failed to update book');
+    return { success: false, message: 'Failed to update book' };
   }
 }
 // Delete (unchanged)

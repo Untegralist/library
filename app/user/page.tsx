@@ -106,9 +106,9 @@ export default async function UserDashboard() {
                   </div>
 
                   <div className="flex items-center gap-3 self-end sm:self-center">
-                    <button className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                    <Link href={`/user/editbook/${book.id}`} className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
                       Edit
-                    </button>
+                    </Link>
                     <Link href={`/books/${book.id}`} className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-transparent rounded-lg hover:bg-blue-100 transition-colors">
                       View
                     </Link>
