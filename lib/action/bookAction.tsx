@@ -46,47 +46,36 @@ export async function createBook(prevState: any, formData: FormData) {
 
 // lib/action/bookAction.ts — updateBook
 export async function updateBook(formData: FormData) {
-  // Read values safely with .get()
-  const id = formData.get('id') as string;
-  const title = formData.get('title') as string;
-  const author = formData.get('author') as string;
-  const genre = formData.get('genre') as 'FICTION' | 'NON_FICTION';
-  const synopsis = formData.get('synopsis') as string;
-  const writerId = formData.get('writerId') as string;
-  const documentUrl = formData.get('documentUrl') as string | null;
+  const data: Record<string, string> = {};
+  formData.forEach((value, key) => {
+    data[key] = value.toString(); // safe conversion
+  });
 
-  // Manual validation (fallback if Zod fails on non-string values)
+  const validated = BookSchema.safeParse(data);
+
+  if (!validated.success) {
+    return { success: false, errors: validated.error.flatten().fieldErrors };
+  }
+
+  const { id, ...updateData } = validated.data;
+
   if (!id) {
     return { success: false, message: 'Book ID is required' };
-  }
-  if (!title || title.trim() === '') {
-    return { success: false, message: 'Title is required' };
-  }
-  if (!author || author.trim() === '') {
-    return { success: false, message: 'Author is required' };
-  }
-  if (!['FICTION', 'NON_FICTION'].includes(genre)) {
-    return { success: false, message: 'Please select Fiction or Non-Fiction' };
-  }
-  if (!synopsis || synopsis.length < 10) {
-    return { success: false, message: 'Synopsis must be at least 10 characters' };
   }
 
   try {
     await prisma.book.update({
       where: { id },
       data: {
-        title,
-        author,
-        genre: genre as Genre,
-        synopsis,
-        documentUrl: documentUrl || null,
+        ...updateData,
+        genre: updateData.genre as Genre,
       },
     });
 
     revalidatePath(`/books/${id}`);
     revalidatePath('/user');
-    redirect(`/books/${id}`);
+
+    return { success: true };
   } catch (error) {
     console.error('Update book error:', error);
     return { success: false, message: 'Failed to update book' };
