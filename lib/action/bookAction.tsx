@@ -46,17 +46,19 @@ export async function createBook(prevState: any, formData: FormData) {
 
 // FIXED: updateBook now takes only prevState + formData
 // Update book - now takes ONLY formData (correct for <form action>)
+// lib/action/bookAction.ts (updateBook only)
 export async function updateBook(formData: FormData) {
   const validated = BookSchema.safeParse(Object.fromEntries(formData));
 
   if (!validated.success) {
+    // Return error state (Next.js allows this for form state)
     return { errors: validated.error.flatten().fieldErrors };
   }
 
   const { id, ...data } = validated.data;
 
   if (!id) {
-    return { message: 'Book ID is required for update' };
+    throw new Error('Book ID is required for update');
   }
 
   try {
@@ -73,7 +75,7 @@ export async function updateBook(formData: FormData) {
     redirect(`/books/${id}`);
   } catch (error) {
     console.error('Update book error:', error);
-    return { message: 'Failed to update book' };
+    throw new Error('Failed to update book');
   }
 }
 // Delete (unchanged)
